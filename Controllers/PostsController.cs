@@ -100,32 +100,36 @@ namespace LetsChatFinal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,Created,UserName")] Post post)
         {
-            if (id != post.Id)
+            if (post.UserName == User.Identity.Name)
             {
-                return NotFound();
-            }
+                if (id != post.Id)
+                {
+                    return NotFound();
+                }
 
-            if (ModelState.IsValid)
-            {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(post);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PostExists(post.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(post);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!PostExists(post.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                return View(post);
             }
-            return View(post);
+            return BadRequest("Must be same user");
         }
 
         // GET: Posts/Delete/5

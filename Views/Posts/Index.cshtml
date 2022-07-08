@@ -48,7 +48,7 @@ else
             <p>Date:   @Html.DisplayFor(modelItem => item.Created) </p>
         </div>  
 
-        @if (SignInManager.IsSignedIn(User))
+        @if (SignInManager.IsSignedIn(User) && User.Identity.Name == item.UserName)
         {
             <div class="text-center">
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
